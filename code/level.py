@@ -2,6 +2,7 @@ import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size
 from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin
+from enemy import Enemy
 
 class Level:
     def __init__(self,level_data,surface):
@@ -37,6 +38,10 @@ class Level:
         enemy_layout = import_csv_layout(level_data['enemies'])
         self.enemy_sprites = self.create_tile_group(enemy_layout,'enemies')
 
+        # constraint
+        constraint_layout = import_csv_layout(level_data['constraints'])
+        self.constraint_sprites = self.create_tile_group(constraint_layout,'constraints')
+
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
@@ -70,11 +75,17 @@ class Level:
                     if type == 'enemies':
                         sprite = Enemy(tile_size,x,y)
 
+                    if type == 'constraints':
+                        sprite = Tile(tile_size,x,y)
+
                     sprite_group.add(sprite)
 
-                    
-
         return sprite_group
+
+    def enemy_collision_reverse(self):
+        for enemy in self.enemy_sprites.sprites():
+            if pygame.sprite.spritecollide(enemy,self.constraint_sprites,False):
+                enemy.reverse()
 
     def run(self):
         # run the entire level
@@ -91,6 +102,12 @@ class Level:
         self.box_sprites.update(self.world_shift)
         self.box_sprites.draw(self.display_surface)
 
+        # enemy
+        self.enemy_sprites.update(self.world_shift)
+        self.constraint_sprites.update(self.world_shift)
+        self.enemy_collision_reverse()
+        self.enemy_sprites.draw(self.display_surface)
+
         # bushes
         self.bush_sprites.update(self.world_shift)
         self.bush_sprites.draw(self.display_surface)
@@ -102,4 +119,6 @@ class Level:
         # coins
         self.coins_sprites.update(self.world_shift)
         self.coins_sprites.draw(self.display_surface)
+
+        
         
