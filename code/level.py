@@ -1,13 +1,13 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size
-from tiles import Tile, StaticTile, Grass, Box, Bush, Tree
+from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin
 
 class Level:
     def __init__(self,level_data,surface):
         # general setup
         self.display_surface = surface
-        self.world_shift = -5
+        self.world_shift = -1
 
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
@@ -28,6 +28,14 @@ class Level:
         # tree setup
         tree_layout = import_csv_layout(level_data['trees'])
         self.tree_sprites = self.create_tile_group(tree_layout,'trees')
+
+        # coins
+        coin_layout = import_csv_layout(level_data['coins'])
+        self.coins_sprites = self.create_tile_group(coin_layout,'coins')
+
+        # enemy
+        enemy_layout = import_csv_layout(level_data['enemies'])
+        self.enemy_sprites = self.create_tile_group(enemy_layout,'enemies')
 
 
     def create_tile_group(self,layout,type):
@@ -56,6 +64,12 @@ class Level:
                     if type == 'trees':
                         sprite = Tree(tile_size,x,y,val)
 
+                    if type == 'coins':
+                        sprite = Coin(tile_size,x,y,'../graphics/coins/gold')
+
+                    if type == 'enemies':
+                        sprite = Enemy(tile_size,x,y)
+
                     sprite_group.add(sprite)
 
                     
@@ -68,10 +82,10 @@ class Level:
         # terrain
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
-        
-        # grass
-        self.grass_sprites.update(self.world_shift)
-        self.grass_sprites.draw(self.display_surface)
+
+        # trees
+        self.tree_sprites.update(self.world_shift)
+        self.tree_sprites.draw(self.display_surface)
 
         # boxes
         self.box_sprites.update(self.world_shift)
@@ -80,8 +94,12 @@ class Level:
         # bushes
         self.bush_sprites.update(self.world_shift)
         self.bush_sprites.draw(self.display_surface)
+        
+        # grass
+        self.grass_sprites.update(self.world_shift)
+        self.grass_sprites.draw(self.display_surface)
 
-        # trees
-        self.tree_sprites.update(self.world_shift)
-        self.tree_sprites.draw(self.display_surface)
+        # coins
+        self.coins_sprites.update(self.world_shift)
+        self.coins_sprites.draw(self.display_surface)
         
