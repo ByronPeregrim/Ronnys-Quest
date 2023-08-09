@@ -10,7 +10,6 @@ class Background:
             bg_image = pygame.transform.scale(bg_image,(screen_width,screen_height))
             self.bg_images.append(bg_image)
         self.bg_width = self.bg_images[0].get_width()
-
     
     def draw(self,surface,shift):
         for x in range(2):
