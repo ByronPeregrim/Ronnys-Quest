@@ -13,7 +13,7 @@ class Background:
 
     
     def draw(self,surface,shift):
-        for x in range(5):
+        for x in range(2):
             speed = 1
             for i in self.bg_images:
                 surface.blit(i, ((x * self.bg_width) - shift * speed, 0))

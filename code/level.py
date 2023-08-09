@@ -1,9 +1,10 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
-from settings import tile_size, screen_height
+from settings import tile_size, screen_height, screen_width
 from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin
 from enemy import Enemy
 from decoration import Background, Water
+from player import Player
 
 class Level:
     def __init__(self,level_data,surface):
@@ -21,7 +22,7 @@ class Level:
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout,'terrain')
-
+        
         # grass setup
         grass_layout = import_csv_layout(level_data['grass'])
         self.grass_sprites = self.create_tile_group(grass_layout,'grass')
@@ -53,11 +54,10 @@ class Level:
         # decoration 
         self.background = Background()
         self.level_width = len(terrain_layout[0]) * tile_size
-        self.water = Water(screen_height - 15,self.level_width)
+        self.water = Water(screen_height - 15,self.level_width)        
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
-
         for row_index, row in enumerate(layout):
             for col_index,val in enumerate(row):
                 if val != '-1':
@@ -100,7 +100,8 @@ class Level:
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if val == '1': # Player
-                    print('player goes here')
+                    player_sprite = Player((x,y))
+                    self.player.add(player_sprite)
                 if val == '0': # Goal
                     goal_surface = pygame.image.load('../graphics/player/goal.png')
                     sprite = StaticTile(tile_size,x,y,goal_surface)
@@ -110,18 +111,58 @@ class Level:
         for enemy in self.enemy_sprites.sprites():
             if pygame.sprite.spritecollide(enemy,self.constraint_sprites,False):
                 enemy.reverse()
+                
+    def scroll_x(self):
+        player = self.player.sprite
+        player_x = player.rect.centerx
+        direction_x = player.direction.x
+
+        if player_x < (screen_width / 4) and direction_x < 0:
+            self.world_shift = 8
+            self.bg_shift -= 1
+            player.speed = 0
+        elif player_x > screen_width - (screen_width / 4) and direction_x > 0:
+            self.world_shift = -8
+            self.bg_shift += 1
+            player.speed = 0
+        else:
+            self.world_shift = 0
+            player.speed = 8
+
+    def horizontal_movement_collision(self):
+        player = self.player.sprite
+        player.rect.x += player.direction.x * player.speed
+
+        for sprite in self.terrain_sprites.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x < 0:
+                    player.rect.left = sprite.rect.right
+                elif player.direction.x > 0:
+                    player.rect.right = sprite.rect.left
+
+    def vertical_movement_collision(self):
+        player = self.player.sprite
+        player.apply_gravity()
+
+        for sprite in self.terrain_sprites.sprites():
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.y > 0:
+                    player.rect.bottom = sprite.rect.top
+                    player.direction.y = 0
+                elif player.direction.y < 0:
+                    player.rect.top = sprite.rect.bottom
+                    player.direction.y = 0
 
     def run(self):
         # run the entire level
-        self.world_shift = 0
         
-        key = pygame.key.get_pressed()
+        """ key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and self.bg_shift > 0:
             self.bg_shift -= 3
             self.world_shift = 5
         if key[pygame.K_RIGHT] and self.bg_shift < 2640:
             self.bg_shift += 3
-            self.world_shift = -5
+            self.world_shift = -5 """
 
         # decoration
         self.background.draw(self.display_surface,self.bg_shift)
@@ -162,3 +203,11 @@ class Level:
 
         # water
         self.water.draw(self.display_surface,self.world_shift)
+
+        # player
+        self.scroll_x()
+        self.player.update()
+        self.horizontal_movement_collision()
+        self.vertical_movement_collision()
+        self.player.draw(self.display_surface)
+        
