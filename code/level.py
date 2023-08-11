@@ -5,9 +5,10 @@ from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin
 from enemy import Enemy
 from decoration import Background, Water
 from player import Player
+from particles import ParticleEffect
 
 class Level:
-    def __init__(self,level_data,surface):
+    def __init__(self,level_data,surface,change_coins):
         # general setup
         self.display_surface = surface
         self.world_shift = 0
@@ -19,6 +20,9 @@ class Level:
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
         self.player_setup(player_layout)
+
+        # user interface
+        self.change_coins = change_coins
 
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
@@ -47,6 +51,9 @@ class Level:
         # enemy
         enemy_layout = import_csv_layout(level_data['enemies'])
         self.enemy_sprites = self.create_tile_group(enemy_layout,'enemies')
+
+        # explosion particles
+        self.explosion_sprites = pygame.sprite.Group()
 
         # constraint
         constraint_layout = import_csv_layout(level_data['constraints'])
@@ -170,6 +177,26 @@ class Level:
         if player.on_ceiling and player.direction.y > 0:
             player.on_ceiling = False
 
+    def check_coin_collisions(self):
+        collided_coins = pygame.sprite.spritecollide(self.player.sprite,self.coins_sprites,True)
+        if collided_coins:
+            for coin in collided_coins:
+                self.change_coins(1)
+
+    def check_enemy_collisions(self):
+        enemy_collisions = pygame.sprite.spritecollide(self.player.sprite,self.enemy_sprites,False)
+
+        if enemy_collisions:
+            for enemy in enemy_collisions:
+                enemy_center = enemy.rect.centery
+                enemy_top = enemy.rect.top
+                player_bottom = self.player.sprite.rect.bottom
+                if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
+                    self.player.sprite.direction.y = -11
+                    explosion_sprite = ParticleEffect(enemy.rect.center,'explosion')
+                    self.explosion_sprites.add(explosion_sprite)
+                    enemy.kill()
+
     def run(self):
         # run the entire level
 
@@ -193,6 +220,8 @@ class Level:
         self.constraint_sprites.update(self.world_shift)
         self.enemy_collision_reverse()
         self.enemy_sprites.draw(self.display_surface)
+        self.explosion_sprites.update(self.world_shift)
+        self.explosion_sprites.draw(self.display_surface)
 
         # bushes
         self.bush_sprites.update(self.world_shift)
@@ -209,6 +238,9 @@ class Level:
         # player sprites
         self.goal.update(self.world_shift)
         self.goal.draw(self.display_surface)
+
+        self.check_coin_collisions()
+        self.check_enemy_collisions()
 
         # water
         self.water.draw(self.display_surface,self.world_shift)
