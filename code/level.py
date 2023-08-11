@@ -6,14 +6,24 @@ from enemy import Enemy
 from decoration import Background, Water
 from player import Player
 from particles import ParticleEffect
+from game_data import levels
 
 class Level:
-    def __init__(self,level_data,surface,change_coins,change_health):
+    def __init__(self,current_level,level_data,surface,change_coins,change_health):
         # general setup
         self.display_surface = surface
+        self.current_level = current_level
+        level_data = levels[current_level]
+        level_content = level_data['content']
+        self.new_max_level = level_data['unlock']
         self.world_shift = 0
         self.bg_shift = 0
         self.current_x = 0
+
+        # level display
+        self.font = pygame.font.Font(None,4)
+        self.text_surf = self.font.render(level_content,True,'White')
+        self.text_rect = self.text_surf.get_rect(center = (screen_width / 2, screen_height / 2))
 
         # player
         player_layout = import_csv_layout(level_data['player'])
@@ -62,7 +72,7 @@ class Level:
         # decoration 
         self.background = Background()
         self.level_width = len(terrain_layout[0]) * tile_size
-        self.water = Water(screen_height - 15,self.level_width)        
+        self.water = Water(screen_height - 15,self.level_width)
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
@@ -192,6 +202,8 @@ class Level:
 
     def run(self):
         # run the entire level
+
+        self.display_surface.blit(self.text_surf,self.text_rect)
 
         # decoration
         self.background.draw(self.display_surface,self.bg_shift)

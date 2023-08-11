@@ -15,7 +15,7 @@ class Background:
         for x in range(3):
             speed = 1
             for i in self.bg_images:
-                surface.blit(i, ((x * self.bg_width) - 200 - shift * speed, 0))
+                surface.blit(i, ((x * self.bg_width) - (200*speed) - (shift * speed), 0))
                 speed += 0.2
 
 class Water:
