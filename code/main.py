@@ -16,10 +16,13 @@ class Game:
         self.ui = UI(screen)
 
     def create_level(self):
-        self.level = Level(level_0,screen,self.change_coins)
+        self.level = Level(level_0,screen,self.change_coins,self.change_health)
     
     def change_coins(self,amount):
-        self.coins += amount    
+        self.coins += amount
+    
+    def change_health(self,amount):
+        self.cur_health += amount
     
     def run(self):
         self.level.run()

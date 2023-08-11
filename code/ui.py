@@ -20,7 +20,7 @@ class UI:
 
     def show_health(self,current,full):
         self.display_surface.blit(self.health_bar,self.health_bar_rect)
-        health_amount_surf = self.font.render(str(current),False,'gray')
+        health_amount_surf = self.font.render(str(current) + '%',False,'gray')
         health_amount_rect = health_amount_surf.get_rect(midleft = (self.health_bar_rect.right + 4,self.health_bar_rect.centery + 3))
         self.display_surface.blit(health_amount_surf,health_amount_rect)
 

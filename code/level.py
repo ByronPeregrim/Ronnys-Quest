@@ -8,7 +8,7 @@ from player import Player
 from particles import ParticleEffect
 
 class Level:
-    def __init__(self,level_data,surface,change_coins):
+    def __init__(self,level_data,surface,change_coins,change_health):
         # general setup
         self.display_surface = surface
         self.world_shift = 0
@@ -19,7 +19,7 @@ class Level:
         player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.GroupSingle()
-        self.player_setup(player_layout)
+        self.player_setup(player_layout,change_health)
 
         # user interface
         self.change_coins = change_coins
@@ -102,13 +102,13 @@ class Level:
 
         return sprite_group
 
-    def player_setup(self,layout):
+    def player_setup(self,layout,change_health):
         for row_index, row in enumerate(layout):
             for col_index,val in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if val == '1': # Player
-                    player_sprite = Player((x,y))
+                    player_sprite = Player((x,y),change_health)
                     self.player.add(player_sprite)
                 if val == '0': # Goal
                     goal_surface = pygame.image.load('../graphics/player/goal.png')
@@ -139,43 +139,34 @@ class Level:
 
     def horizontal_movement_collision(self):
         player = self.player.sprite
-        player.rect.x += player.direction.x * player.speed
+        player.collision_rect.x += player.direction.x * player.speed
 
         for sprite in self.terrain_sprites.sprites():
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
+                    player.collision_rect.left = sprite.rect.right
                     player.on_left = True
-                    self.current_ = player.rect.left
                 elif player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
+                    player.collision_rect.right = sprite.rect.left
                     player.on_right = True
-                    self.current_x = player.rect.right
-
-        if player.on_left and (player.rect.left < self.current_x or player.direction.x >= 0):
-            player.on_left = False
-        if player.on_right and (player.rect.right < self.current_x or player.direction.x <= 0):
-            player.on_right = False
 
     def vertical_movement_collision(self):
         player = self.player.sprite
         player.apply_gravity()
 
         for sprite in self.terrain_sprites.sprites():
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.collision_rect):
                 if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
+                    player.collision_rect.bottom = sprite.rect.top
                     player.direction.y = 0
                     player.on_ground = True
                 elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
+                    player.collision_rect.top = sprite.rect.bottom
                     player.direction.y = 0
                     player.on_ceiling = True
         
         if player.on_ground and player.direction.y < 0 or player.direction.y > 1:
             player.on_ground = False
-        if player.on_ceiling and player.direction.y > 0:
-            player.on_ceiling = False
 
     def check_coin_collisions(self):
         collided_coins = pygame.sprite.spritecollide(self.player.sprite,self.coins_sprites,True)
@@ -196,6 +187,8 @@ class Level:
                     explosion_sprite = ParticleEffect(enemy.rect.center,'explosion')
                     self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
+                else:
+                    self.player.sprite.get_damage()
 
     def run(self):
         # run the entire level
