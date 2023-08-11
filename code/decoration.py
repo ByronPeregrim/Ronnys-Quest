@@ -12,10 +12,10 @@ class Background:
         self.bg_width = self.bg_images[0].get_width()
     
     def draw(self,surface,shift):
-        for x in range(2):
+        for x in range(3):
             speed = 1
             for i in self.bg_images:
-                surface.blit(i, ((x * self.bg_width) - shift * speed, 0))
+                surface.blit(i, ((x * self.bg_width) - 200 - shift * speed, 0))
                 speed += 0.2
 
 class Water:
