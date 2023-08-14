@@ -3,10 +3,10 @@ import pygame
 from tiles import AnimatedTile
 
 class Background:
-    def __init__(self):
+    def __init__(self,current_level):
         self.bg_images = []
         for i in range(1,6):
-            bg_image = pygame.image.load(f'../graphics/decoration/background/{i}.png').convert_alpha()
+            bg_image = pygame.image.load(f'../graphics/decoration/background/background-{current_level}/{i}.png').convert_alpha()
             bg_image = pygame.transform.scale(bg_image,(screen_width,screen_height))
             self.bg_images.append(bg_image)
         self.bg_width = self.bg_images[0].get_width()

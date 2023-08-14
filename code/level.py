@@ -75,7 +75,7 @@ class Level:
         self.constraint_sprites = self.create_tile_group(constraint_layout,'constraints')
 
         # decoration 
-        self.background = Background()
+        self.background = Background(self.current_level)
         self.level_width = len(terrain_layout[0]) * tile_size
         self.water = Water(screen_height - 15,self.level_width)
 
@@ -242,6 +242,11 @@ class Level:
         self.box_sprites.update(self.world_shift)
         self.box_sprites.draw(self.display_surface)
 
+        if self.current_level == 1:
+            # rocks
+            self.rock_sprites.update(self.world_shift)
+            self.rock_sprites.draw(self.display_surface)
+
         # enemy
         self.enemy_sprites.update(self.world_shift)
         self.constraint_sprites.update(self.world_shift)
@@ -254,10 +259,6 @@ class Level:
             # bushes
             self.bush_sprites.update(self.world_shift)
             self.bush_sprites.draw(self.display_surface)
-        if self.current_level == 1:
-            # rocks
-            self.rock_sprites.update(self.world_shift)
-            self.rock_sprites.draw(self.display_surface)
         
         # grass
         self.grass_sprites.update(self.world_shift)
