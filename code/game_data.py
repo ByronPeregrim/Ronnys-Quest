@@ -8,35 +8,35 @@ level_0 = {
     'grass': '../levels/0/level_0_grass.csv',
     'player': '../levels/0/level_0_player.csv',
     'trees': '../levels/0/level_0_trees.csv',
-    'node_pos':(110,400),
+    'node_pos':(220,400),
     'content': 'this is level 0', 'unlock':1
 }
 
 level_1 = {
-    'terrain': '../levels/0/level_0_terrain.csv',
-    'coins': '../levels/0/level_0_coins.csv',
-    'boxes': '../levels/0/level_0_boxes.csv',
-    'bushes': '../levels/0/level_0_bushes.csv',
-    'enemies': '../levels/0/level_0_enemies.csv',
-    'constraints': '../levels/0/level_0_enemy_boundaries.csv',
-    'grass': '../levels/0/level_0_grass.csv',
-    'player': '../levels/0/level_0_player.csv',
-    'trees': '../levels/0/level_0_trees.csv',
-    'node_pos':(300,220),
+    'terrain': '../levels/1/level_1_terrain.csv',
+    'coins': '../levels/1/level_1_coins.csv',
+    'boxes': '../levels/1/level_1_boxes.csv',
+    'rocks': '../levels/1/level_1_rocks.csv',
+    'enemies': '../levels/1/level_1_enemies.csv',
+    'constraints': '../levels/1/level_1_enemy_boundaries.csv',
+    'grass': '../levels/1/level_1_grass.csv',
+    'player': '../levels/1/level_1_player.csv',
+    'trees': '../levels/1/level_1_trees.csv',
+    'node_pos':(600,220),
     'content': 'this is level 1', 'unlock':2
 }
 
 level_2 = {
-    'terrain': '../levels/0/level_0_terrain.csv',
-    'coins': '../levels/0/level_0_coins.csv',
-    'boxes': '../levels/0/level_0_boxes.csv',
-    'bushes': '../levels/0/level_0_bushes.csv',
-    'enemies': '../levels/0/level_0_enemies.csv',
-    'constraints': '../levels/0/level_0_enemy_boundaries.csv',
-    'grass': '../levels/0/level_0_grass.csv',
-    'player': '../levels/0/level_0_player.csv',
-    'trees': '../levels/0/level_0_trees.csv',
-    'node_pos':(480,610),
+    'terrain': '../levels/2/level_2_terrain.csv',
+    'coins': '../levels/2/level_2_coins.csv',
+    'boxes': '../levels/2/level_2_boxes.csv',
+    'bushes': '../levels/2/level_2_bushes.csv',
+    'enemies': '../levels/2/level_2_enemies.csv',
+    'constraints': '../levels/2/level_2_enemy_boundaries.csv',
+    'grass': '../levels/2/level_2_grass.csv',
+    'player': '../levels/2/level_2_player.csv',
+    'trees': '../levels/2/level_2_trees.csv',
+    'node_pos':(980,310),
     'content': 'this is level 2', 'unlock':3
 }
 

@@ -17,14 +17,14 @@ class StaticTile(Tile):
         self.image = surface 
 
 class Grass(StaticTile):
-    def __init__(self,size,x,y,val):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Grass/{int(val)+1}.png').convert_alpha())
+    def __init__(self,size,x,y,val,current_level):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Grass-{int(current_level)}/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
 class Box(StaticTile):
-    def __init__(self,size,x,y,val):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Boxes/{int(val)+1}.png').convert_alpha())
+    def __init__(self,size,x,y,val,current_level):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Boxes-{int(current_level)}/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
@@ -34,9 +34,15 @@ class Bush(StaticTile):
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
-class Tree(StaticTile):
+class Rock(StaticTile):
     def __init__(self,size,x,y,val):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Trees/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Rocks/{int(val)+1}.png').convert_alpha())
+        offset_y = y + size
+        self.rect = self.image.get_rect(bottomleft = (x,offset_y))
+
+class Tree(StaticTile):
+    def __init__(self,size,x,y,val,current_level):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Trees-{int(current_level)}/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 

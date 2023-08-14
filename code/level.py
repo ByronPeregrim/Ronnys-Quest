@@ -1,7 +1,7 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size, screen_height, screen_width
-from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin
+from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin, Rock
 from enemy import Enemy
 from decoration import Background, Water
 from player import Player
@@ -9,7 +9,7 @@ from particles import ParticleEffect
 from game_data import levels
 
 class Level:
-    def __init__(self,current_level,level_data,surface,change_coins,change_health):
+    def __init__(self,current_level,level_data,surface,create_overworld,change_coins,change_health):
         # general setup
         self.display_surface = surface
         self.current_level = current_level
@@ -19,6 +19,7 @@ class Level:
         self.world_shift = 0
         self.bg_shift = 0
         self.current_x = 0
+        self.create_overworld = create_overworld
 
         # level display
         self.font = pygame.font.Font(None,4)
@@ -47,8 +48,12 @@ class Level:
         self.box_sprites = self.create_tile_group(box_layout,'boxes')
 
         # bush setup
-        bush_layout = import_csv_layout(level_data['bushes'])
-        self.bush_sprites = self.create_tile_group(bush_layout,'bushes')
+        if self.current_level == 0:
+            bush_layout = import_csv_layout(level_data['bushes'])
+            self.bush_sprites = self.create_tile_group(bush_layout,'bushes')
+        if self.current_level == 1:
+            rock_layout = import_csv_layout(level_data['rocks'])
+            self.rock_sprites = self.create_tile_group(rock_layout,'rocks')
 
         # tree setup
         tree_layout = import_csv_layout(level_data['trees'])
@@ -83,27 +88,35 @@ class Level:
                     y = row_index * tile_size
 
                     if type == 'terrain':
-                        terrain_tile_list = import_cut_graphics('../graphics/terrains/Tileset.png')
+                        if self.current_level == 0:
+                            terrain_tile_list = import_cut_graphics('../graphics/terrains/Tileset.png')
+                        elif self.current_level == 1:
+                            terrain_tile_list = import_cut_graphics('../graphics/terrains/Tileset1.png')
+                        else:
+                            terrain_tile_list = import_cut_graphics('../graphics/terrains/Tileset2.png')   
                         tile_surface = terrain_tile_list[int(val)]
                         sprite = StaticTile(tile_size,x,y,tile_surface)
                     
                     if type == 'grass':
-                        sprite = Grass(tile_size,x,y,val)
+                        sprite = Grass(tile_size,x,y,val,self.current_level)
 
                     if type == 'boxes':
-                        sprite = Box(tile_size,x,y,val)
+                        sprite = Box(tile_size,x,y,val,self.current_level)
 
                     if type == 'bushes':
                         sprite = Bush(tile_size,x,y,val)
 
+                    if type == 'rocks':
+                        sprite = Rock(tile_size,x,y,val)
+
                     if type == 'trees':
-                        sprite = Tree(tile_size,x,y,val)
+                        sprite = Tree(tile_size,x,y,val,self.current_level)
 
                     if type == 'coins':
                         sprite = Coin(tile_size,x,y,'../graphics/coins/gold')
 
                     if type == 'enemies':
-                        sprite = Enemy(tile_size,x,y)
+                        sprite = Enemy(tile_size,x,y,self.current_level)
 
                     if type == 'constraints':
                         sprite = Tile(tile_size,x,y)
@@ -200,9 +213,18 @@ class Level:
                 else:
                     self.player.sprite.get_damage()
 
+    def input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            self.create_overworld(self.current_level,self.new_max_level)
+        if keys[pygame.K_ESCAPE]:
+            self.create_overworld(self.current_level,0)
+
+
     def run(self):
         # run the entire level
 
+        self.input()
         self.display_surface.blit(self.text_surf,self.text_rect)
 
         # decoration
@@ -228,9 +250,14 @@ class Level:
         self.explosion_sprites.update(self.world_shift)
         self.explosion_sprites.draw(self.display_surface)
 
-        # bushes
-        self.bush_sprites.update(self.world_shift)
-        self.bush_sprites.draw(self.display_surface)
+        if self.current_level == 0:
+            # bushes
+            self.bush_sprites.update(self.world_shift)
+            self.bush_sprites.draw(self.display_surface)
+        if self.current_level == 1:
+            # rocks
+            self.rock_sprites.update(self.world_shift)
+            self.rock_sprites.draw(self.display_surface)
         
         # grass
         self.grass_sprites.update(self.world_shift)
