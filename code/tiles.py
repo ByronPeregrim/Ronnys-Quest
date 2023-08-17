@@ -18,31 +18,55 @@ class StaticTile(Tile):
 
 class Grass(StaticTile):
     def __init__(self,size,x,y,val,current_level):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Grass-{int(current_level)}/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/{int(current_level)}/Grass/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
 class Box(StaticTile):
     def __init__(self,size,x,y,val,current_level):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Boxes-{int(current_level)}/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/{int(current_level)}/Boxes/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
 class Bush(StaticTile):
     def __init__(self,size,x,y,val):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Bushes/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/0/Bushes/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
 class Rock(StaticTile):
     def __init__(self,size,x,y,val):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Rocks/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/1/Rocks/{int(val)+1}.png').convert_alpha())
+        offset_y = y + size
+        self.rect = self.image.get_rect(bottomleft = (x,offset_y))
+
+class Tube(StaticTile):
+    def __init__(self,size,x,y,val):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/2/tubes/{int(val)+1}.png').convert_alpha())
+        offset_y = y + size
+        self.rect = self.image.get_rect(bottomleft = (x,offset_y))
+
+class Object(StaticTile):
+    def __init__(self,size,x,y,val):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/2/objects/{int(val)+1}.png').convert_alpha())
+        offset_y = y + size
+        self.rect = self.image.get_rect(bottomleft = (x,offset_y))
+
+class Power_Line(StaticTile):
+    def __init__(self,size,x,y,val):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/2/power_lines/{int(val)+1}.png').convert_alpha())
+        offset_y = y + size
+        self.rect = self.image.get_rect(bottomleft = (x,offset_y))
+
+class Chair(StaticTile):
+    def __init__(self,size,x,y,val):
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/2/objects/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 
 class Tree(StaticTile):
     def __init__(self,size,x,y,val,current_level):
-        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/Trees-{int(current_level)}/{int(val)+1}.png').convert_alpha())
+        super().__init__(size,x,y,pygame.image.load(f'../graphics/decoration/{int(current_level)}/Trees/{int(val)+1}.png').convert_alpha())
         offset_y = y + size
         self.rect = self.image.get_rect(bottomleft = (x,offset_y))
 

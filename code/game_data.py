@@ -29,13 +29,14 @@ level_1 = {
 level_2 = {
     'terrain': '../levels/2/level_2_terrain.csv',
     'coins': '../levels/2/level_2_coins.csv',
-    'boxes': '../levels/2/level_2_boxes.csv',
-    'bushes': '../levels/2/level_2_bushes.csv',
+    'chairs': '../levels/2/level_2_chairs.csv',
+    'power_lines': '../levels/2/level_2_power_lines.csv',
     'enemies': '../levels/2/level_2_enemies.csv',
     'constraints': '../levels/2/level_2_enemy_boundaries.csv',
-    'grass': '../levels/2/level_2_grass.csv',
+    'tubes': '../levels/2/level_2_tubes.csv',
     'player': '../levels/2/level_2_player.csv',
-    'trees': '../levels/2/level_2_trees.csv',
+    'objects': '../levels/2/level_2_objects.csv',
+    'background_tiles': '../levels/2/level_2_background_tiles.csv',
     'node_pos':(980,310),
     'content': 'this is level 2', 'unlock':3
 }

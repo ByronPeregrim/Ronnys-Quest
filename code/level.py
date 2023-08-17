@@ -1,7 +1,7 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size, screen_height, screen_width
-from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin, Rock
+from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin, Rock, Tube, Object, Power_Line, Chair
 from enemy import Enemy
 from decoration import Background, Water
 from player import Player
@@ -29,7 +29,7 @@ class Level:
         # player
         player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
-        self.goal = pygame.sprite.GroupSingle()
+        self.goal = pygame.sprite.Group()
         self.player_setup(player_layout,change_health)
 
         # user interface
@@ -39,13 +39,38 @@ class Level:
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout,'terrain')
         
-        # grass setup
-        grass_layout = import_csv_layout(level_data['grass'])
-        self.grass_sprites = self.create_tile_group(grass_layout,'grass')
+        
+        if self.current_level == 0 or self.current_level == 1:
+            # grass setup
+            grass_layout = import_csv_layout(level_data['grass'])
+            self.grass_sprites = self.create_tile_group(grass_layout,'grass')
 
-        # box setup
-        box_layout = import_csv_layout(level_data['boxes'])
-        self.box_sprites = self.create_tile_group(box_layout,'boxes')
+            # box setup
+            box_layout = import_csv_layout(level_data['boxes'])
+            self.box_sprites = self.create_tile_group(box_layout,'boxes')
+
+            # tree setup
+            tree_layout = import_csv_layout(level_data['trees'])
+            self.tree_sprites = self.create_tile_group(tree_layout,'trees')
+
+        if self.current_level == 2:
+            tube_layout = import_csv_layout(level_data['tubes'])
+            self.tube_sprites = self.create_tile_group(tube_layout,'tubes')
+
+            object_layout = import_csv_layout(level_data['objects'])
+            self.object_sprites = self.create_tile_group(object_layout,'objects')
+
+            power_line_layout = import_csv_layout(level_data['power_lines'])
+            self.power_line_sprites = self.create_tile_group(power_line_layout,'power_lines')
+
+            chair_layout = import_csv_layout(level_data['chairs'])
+            self.chair_sprites = self.create_tile_group(chair_layout,'chairs')
+
+            background_tile_layout = import_csv_layout(level_data['background_tiles'])
+            self.background_tile_sprites = self.create_tile_group(background_tile_layout,'background_tiles')
+
+
+
 
         # bush setup
         if self.current_level == 0:
@@ -54,10 +79,6 @@ class Level:
         if self.current_level == 1:
             rock_layout = import_csv_layout(level_data['rocks'])
             self.rock_sprites = self.create_tile_group(rock_layout,'rocks')
-
-        # tree setup
-        tree_layout = import_csv_layout(level_data['trees'])
-        self.tree_sprites = self.create_tile_group(tree_layout,'trees')
 
         # coins
         coin_layout = import_csv_layout(level_data['coins'])
@@ -77,7 +98,7 @@ class Level:
         # decoration 
         self.background = Background(self.current_level)
         self.level_width = len(terrain_layout[0]) * tile_size
-        self.water = Water(screen_height - 15,self.level_width)
+        self.water = Water(screen_height - 15,self.level_width,self.current_level)
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
@@ -97,6 +118,11 @@ class Level:
                         tile_surface = terrain_tile_list[int(val)]
                         sprite = StaticTile(tile_size,x,y,tile_surface)
                     
+                    if type == 'background_tiles':
+                        background_tile_list = import_cut_graphics('../graphics/terrains/Tileset2.png')
+                        tile_surface = background_tile_list[int(val)]
+                        sprite = StaticTile(tile_size,x,y,tile_surface)
+                    
                     if type == 'grass':
                         sprite = Grass(tile_size,x,y,val,self.current_level)
 
@@ -108,6 +134,18 @@ class Level:
 
                     if type == 'rocks':
                         sprite = Rock(tile_size,x,y,val)
+
+                    if type == 'tubes':
+                        sprite = Tube(tile_size,x,y,val)
+                    
+                    if type == 'objects':
+                        sprite = Object(tile_size,x,y,val)
+
+                    if type == 'power_lines':
+                        sprite = Power_Line(tile_size,x,y,val)
+
+                    if type == 'chairs':
+                        sprite = Chair(tile_size,x,y,val)
 
                     if type == 'trees':
                         sprite = Tree(tile_size,x,y,val,self.current_level)
@@ -220,7 +258,6 @@ class Level:
         if keys[pygame.K_ESCAPE]:
             self.create_overworld(self.current_level,0)
 
-
     def run(self):
         # run the entire level
 
@@ -230,22 +267,46 @@ class Level:
         # decoration
         self.background.draw(self.display_surface,self.bg_shift)
 
+        if self.current_level == 2:
+            self.background_tile_sprites.update(self.world_shift)
+            self.background_tile_sprites.draw(self.display_surface)
+
         # terrain
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
 
-        # trees
-        self.tree_sprites.update(self.world_shift)
-        self.tree_sprites.draw(self.display_surface)
+        if self.current_level == 0 or self.current_level == 1:
+             # trees
+            self.tree_sprites.update(self.world_shift)
+            self.tree_sprites.draw(self.display_surface)
 
-        # boxes
-        self.box_sprites.update(self.world_shift)
-        self.box_sprites.draw(self.display_surface)
+            # boxes
+            self.box_sprites.update(self.world_shift)
+            self.box_sprites.draw(self.display_surface)
+
 
         if self.current_level == 1:
             # rocks
             self.rock_sprites.update(self.world_shift)
             self.rock_sprites.draw(self.display_surface)
+
+        if self.current_level == 2:
+            # tubes
+            self.tube_sprites.update(self.world_shift)
+            self.tube_sprites.draw(self.display_surface)
+
+            # objects
+            self.object_sprites.update(self.world_shift)
+            self.object_sprites.draw(self.display_surface)
+
+            # power lines
+            self.power_line_sprites.update(self.world_shift)
+            self.power_line_sprites.draw(self.display_surface)
+
+            # chairs
+            self.chair_sprites.update(self.world_shift)
+            self.chair_sprites.draw(self.display_surface)
+
 
         # enemy
         self.enemy_sprites.update(self.world_shift)
@@ -260,9 +321,10 @@ class Level:
             self.bush_sprites.update(self.world_shift)
             self.bush_sprites.draw(self.display_surface)
         
-        # grass
-        self.grass_sprites.update(self.world_shift)
-        self.grass_sprites.draw(self.display_surface)
+        if self.current_level == 0 or self.current_level == 1:
+            # grass
+            self.grass_sprites.update(self.world_shift)
+            self.grass_sprites.draw(self.display_surface)
 
         # coins
         self.coins_sprites.update(self.world_shift)
