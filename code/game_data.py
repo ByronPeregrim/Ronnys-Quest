@@ -9,7 +9,8 @@ level_0 = {
     'player': '../levels/0/level_0_player.csv',
     'trees': '../levels/0/level_0_trees.csv',
     'node_pos':(220,400),
-    'content': 'this is level 0', 'unlock':1
+    'unlock': 1,
+    'node_graphics': '../graphics/overworld/0',
 }
 
 level_1 = {
@@ -23,7 +24,8 @@ level_1 = {
     'player': '../levels/1/level_1_player.csv',
     'trees': '../levels/1/level_1_trees.csv',
     'node_pos':(600,220),
-    'content': 'this is level 1', 'unlock':2
+    'unlock': 2,
+    'node_graphics': '../graphics/overworld/1',
 }
 
 level_2 = {
@@ -38,7 +40,8 @@ level_2 = {
     'objects': '../levels/2/level_2_objects.csv',
     'background_tiles': '../levels/2/level_2_background_tiles.csv',
     'node_pos':(980,310),
-    'content': 'this is level 2', 'unlock':3
+    'unlock': 2,
+    'node_graphics': '../graphics/overworld/2',
 }
 
 levels = {

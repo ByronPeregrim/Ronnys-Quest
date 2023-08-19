@@ -14,7 +14,6 @@ class Level:
         self.display_surface = surface
         self.current_level = current_level
         level_data = levels[current_level]
-        level_content = level_data['content']
         self.new_max_level = level_data['unlock']
         self.world_shift = 0
         self.bg_shift = 0
@@ -23,8 +22,6 @@ class Level:
 
         # level display
         self.font = pygame.font.Font(None,4)
-        self.text_surf = self.font.render(level_content,True,'White')
-        self.text_rect = self.text_surf.get_rect(center = (screen_width / 2, screen_height / 2))
 
         # player
         player_layout = import_csv_layout(level_data['player'])
@@ -251,6 +248,14 @@ class Level:
                 else:
                     self.player.sprite.get_damage()
 
+    def check_death(self):
+        if self.player.sprite.rect.top > screen_height:
+            self.create_overworld(self.current_level,0)
+
+    def check_win(self):
+        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False):
+            self.create_overworld(self.current_level,self.new_max_level)
+
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
@@ -262,7 +267,6 @@ class Level:
         # run the entire level
 
         self.input()
-        self.display_surface.blit(self.text_surf,self.text_rect)
 
         # decoration
         self.background.draw(self.display_surface,self.bg_shift)
@@ -336,6 +340,9 @@ class Level:
 
         self.check_coin_collisions()
         self.check_enemy_collisions()
+
+        self.check_death()
+        self.check_win()
 
         # water
         self.water.draw(self.display_surface,self.world_shift)
