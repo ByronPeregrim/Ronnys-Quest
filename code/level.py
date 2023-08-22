@@ -259,7 +259,7 @@ class Level:
                     self.player.sprite.get_damage()
 
     def check_death(self):
-        if self.player.sprite.rect.top > screen_height:
+        if self.player.sprite.rect.top > screen_height or self.cur_health <= 0:
             self.create_overworld(self.current_level,0)
 
     def check_win(self):

@@ -11,9 +11,8 @@ class Enemy(AnimatedTile):
         else:
             super().__init__(size,x,y,'../graphics/enemies/enemy/walk-2')
 
-
         self.rect.y += size - self.image.get_size()[1]
-        self.speed = randint(3,4)
+        self.speed = randint(2,3)
     
     def move(self):
         self.rect.x += self.speed

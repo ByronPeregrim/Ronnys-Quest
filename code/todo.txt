@@ -1,7 +1,4 @@
-2. Add death feature if player health <= 0
-3. Add death if player goes below the screen
-4. Win if player collects all coins and goes to far right of screen
-5. Game start screen
-6. Game over screen
-7. Sounds
+- Game OVer Screen
+- Sounds
+- Record best times
 
