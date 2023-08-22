@@ -1,4 +1,2 @@
-- Game OVer Screen
 - Sounds
 - Record best times
-- Death Animation

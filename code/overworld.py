@@ -80,7 +80,6 @@ class Overworld:
         self.allow_input = False
         self.timer_length = 300
 
-    
     def write_text(self):
         welcome_text_surf = self.big_font.render('Welcome to Ronny\'s Quest',False,'gray')
         welcome_text_rect = welcome_text_surf.get_rect(center = (screen_width / 2, screen_height / 15))

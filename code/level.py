@@ -29,6 +29,7 @@ class Level:
         # level display
         self.font = pygame.font.Font(None,4)
         self.clock_font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',30)
+        self.big_font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',60)
 
         # game attributes
         self.max_health = 100
@@ -263,7 +264,12 @@ class Level:
     def check_death(self):
         if self.player.sprite.rect.top > screen_height or self.cur_health <= 0:
             self.dead = True
-            if self.death_animation_timer > 90:
+            game_over_text_surf = self.big_font.render('You Died',False,'Red')
+            game_over_text_rect = game_over_text_surf.get_rect(center = (screen_width / 2, screen_height / 2))
+            self.display_surface.blit(game_over_text_surf,game_over_text_rect)
+            if self.death_animation_timer == 0:
+                self.death_time = self.time
+            if self.death_animation_timer > 110:
                 self.create_overworld(self.current_level,0)
             else:
                 self.death_animation_timer += 1
@@ -280,7 +286,10 @@ class Level:
             self.create_overworld(self.current_level,0)
 
     def update_time(self):
-            self.time = round(((pygame.time.get_ticks() - self.initial_time) / 1000),1)
+            if self.dead:
+                self.time = self.death_time
+            else:
+                self.time = round(((pygame.time.get_ticks() - self.initial_time) / 1000),1)
 
     def show_clock(self,time):
         clock_amount_surf = self.clock_font.render(str(time) + '"',False,'gray')
