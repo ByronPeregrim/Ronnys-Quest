@@ -29,8 +29,3 @@ class UI:
         coin_amount_surf = self.font.render(str(amount),False,'gray')
         coin_amount_rect = coin_amount_surf.get_rect(midleft = (self.coin_rect.right + 4,self.coin_rect.centery + 3))
         self.display_surface.blit(coin_amount_surf,coin_amount_rect)
-
-    def show_clock(self,time):
-        clock_amount_surf = self.font.render(str(time) + '"',False,'gray')
-        clock_amount_rect = clock_amount_surf.get_rect(topright = (1150,20))
-        self.display_surface.blit(clock_amount_surf,clock_amount_rect)

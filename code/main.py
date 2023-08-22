@@ -2,35 +2,16 @@ import pygame, sys
 from settings import *
 from level import Level
 from game_data import level_0
-from ui import UI
 from overworld import Overworld
 
 class Game:
     def __init__(self):
-        self.max_level = 0
+        self.max_level = 1
         self.overworld = Overworld(0,self.max_level,screen,self.create_level)
         self.status = 'overworld'
-        
-        # game attributes
-        self.max_health = 100
-        self.cur_health = 100
-        self.coins = 0
-
-        # user interface
-        self.ui = UI(screen)
-        self.time = 0
-    
-    def change_coins(self,amount):
-        self.coins += amount
-    
-    def change_health(self,amount):
-        self.cur_health += amount
-    
-    def get_time(self):
-        self.time = round((pygame.time.get_ticks() / 1000),1)
 
     def create_level(self,current_level):
-        self.level = Level(current_level,level_0,screen,self.create_overworld,self.change_coins,self.change_health)
+        self.level = Level(current_level,level_0,screen,self.create_overworld)
         self.status = 'level'
          
     def create_overworld(self,current_level,new_max_level):
@@ -44,10 +25,6 @@ class Game:
             self.overworld.run()
         else:
             self.level.run()
-        self.get_time()
-        self.ui.show_health(self.cur_health,self.max_health)
-        self.ui.show_coins(self.coins)
-        self.ui.show_clock(self.time)
 
 # Pygame setup
 pygame.init()

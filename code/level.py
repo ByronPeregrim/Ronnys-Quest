@@ -1,15 +1,16 @@
 import pygame
 from support import import_csv_layout, import_cut_graphics
 from settings import tile_size, screen_height, screen_width
-from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin, Rock, Tube, Object, Power_Line, Chair
+from tiles import Tile, StaticTile, Grass, Box, Bush, Tree, Coin, Rock, Tube, Object, Power_Line, Chair, Checkpoint
 from enemy import Enemy
 from decoration import Background, Water
 from player import Player
 from particles import ParticleEffect
 from game_data import levels
+from ui import UI
 
 class Level:
-    def __init__(self,current_level,level_data,surface,create_overworld,change_coins,change_health):
+    def __init__(self,current_level,level_data,surface,create_overworld):
         # general setup
         self.display_surface = surface
         self.current_level = current_level
@@ -19,23 +20,28 @@ class Level:
         self.bg_shift = 0
         self.current_x = 0
         self.create_overworld = create_overworld
+        self.time = 0
+        self.initial_time = pygame.time.get_ticks()
+        self.ui = UI(surface)
 
         # level display
         self.font = pygame.font.Font(None,4)
+        self.clock_font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',30)
+
+        # game attributes
+        self.max_health = 100
+        self.cur_health = 100
+        self.coins = 0
 
         # player
         player_layout = import_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
         self.goal = pygame.sprite.Group()
-        self.player_setup(player_layout,change_health)
-
-        # user interface
-        self.change_coins = change_coins
+        self.player_setup(player_layout)
 
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout,'terrain')
-        
         
         if self.current_level == 0 or self.current_level == 1:
             # grass setup
@@ -66,9 +72,6 @@ class Level:
             background_tile_layout = import_csv_layout(level_data['background_tiles'])
             self.background_tile_sprites = self.create_tile_group(background_tile_layout,'background_tiles')
 
-
-
-
         # bush setup
         if self.current_level == 0:
             bush_layout = import_csv_layout(level_data['bushes'])
@@ -96,6 +99,10 @@ class Level:
         self.background = Background(self.current_level)
         self.level_width = len(terrain_layout[0]) * tile_size
         self.water = Water(screen_height - 15,self.level_width,self.current_level)
+
+        # checkpoint
+        checkpoint_layout = import_csv_layout(level_data['checkpoint'])
+        self.checkpoint_sprites = self.create_tile_group(checkpoint_layout,'checkpoint')
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
@@ -156,17 +163,20 @@ class Level:
                     if type == 'constraints':
                         sprite = Tile(tile_size,x,y)
 
+                    if type == 'checkpoint':
+                        sprite = Checkpoint(tile_size,x,y,'../graphics/player/checkpoint')
+
                     sprite_group.add(sprite)
 
         return sprite_group
 
-    def player_setup(self,layout,change_health):
+    def player_setup(self,layout):
         for row_index, row in enumerate(layout):
             for col_index,val in enumerate(row):
                 x = col_index * tile_size
                 y = row_index * tile_size
                 if val == '1': # Player
-                    player_sprite = Player((x,y),change_health)
+                    player_sprite = Player((x,y),self.change_health)
                     self.player.add(player_sprite)
                 if val == '0': # Goal
                     goal_surface = pygame.image.load('../graphics/player/goal.png')
@@ -253,7 +263,7 @@ class Level:
             self.create_overworld(self.current_level,0)
 
     def check_win(self):
-        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False):
+        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False) and self.coins == 10:
             self.create_overworld(self.current_level,self.new_max_level)
 
     def input(self):
@@ -262,6 +272,20 @@ class Level:
             self.create_overworld(self.current_level,self.new_max_level)
         if keys[pygame.K_ESCAPE]:
             self.create_overworld(self.current_level,0)
+
+    def update_time(self):
+            self.time = round(((pygame.time.get_ticks() - self.initial_time) / 1000),1)
+
+    def show_clock(self,time):
+        clock_amount_surf = self.clock_font.render(str(time) + '"',False,'gray')
+        clock_amount_rect = clock_amount_surf.get_rect(topright = (1150,20))
+        self.display_surface.blit(clock_amount_surf,clock_amount_rect)
+
+    def change_coins(self,amount):
+        self.coins += amount
+    
+    def change_health(self,amount):
+        self.cur_health += amount
 
     def run(self):
         # run the entire level
@@ -336,7 +360,7 @@ class Level:
 
         # player sprites
         self.goal.update(self.world_shift)
-        self.goal.draw(self.display_surface)
+        
 
         self.check_coin_collisions()
         self.check_enemy_collisions()
@@ -353,4 +377,18 @@ class Level:
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
+
+        # checkpoint
+        self.checkpoint_sprites.update(self.world_shift)
+        self.checkpoint_sprites.draw(self.display_surface)
+
+        # clock
+        self.update_time()
+        self.show_clock(self.time)
+
+        # Health
+        self.ui.show_health(self.cur_health,self.max_health)
+        
+        # Coins
+        self.ui.show_coins(self.coins)
         

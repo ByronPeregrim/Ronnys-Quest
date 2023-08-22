@@ -63,6 +63,7 @@ class Overworld:
         self.max_level = max_level
         self.current_level = start_level
         self.create_level = create_level
+        self.font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',30)
 
         # movement logic
         self.moving = False
@@ -72,7 +73,26 @@ class Overworld:
         # sprites
         self.setup_nodes()
         self.setup_icon()
+
+        # time 
+        self.start_time = pygame.time.get_ticks()
+        self.allow_input = False
+        self.timer_length = 300
+
     
+    def write_text(self):
+        welcome_text_surf = self.font.render('Welcome to Ronny\'s Quest',False,'gray')
+        welcome_text_rect = welcome_text_surf.get_rect(center = (screen_width / 2, screen_height / 16))
+        self.display_surface.blit(welcome_text_surf,welcome_text_rect)
+
+        instruction_text_surf_1 = self.font.render('To unlock the next level,',False,'gray')
+        instruction_text_rect_1 = instruction_text_surf_1.get_rect(center = (screen_width / 2, screen_height - screen_height / 9))
+        self.display_surface.blit(instruction_text_surf_1, instruction_text_rect_1)
+
+        instruction_text_surf_2 = self.font.render('collect all coins and reach the checkpoint!',False,'gray')
+        instruction_text_rect_2 = instruction_text_surf_2.get_rect(center = (screen_width / 2, screen_height - screen_height / 16))
+        self.display_surface.blit(instruction_text_surf_2, instruction_text_rect_2)
+
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()
     
@@ -86,7 +106,7 @@ class Overworld:
     def draw_paths(self):
         points = [node['node_pos'] for index,node in enumerate(levels.values()) if index <= self.max_level]
         if self.max_level > 0:
-            pygame.draw.lines(self.display_surface,'#a04f45',False,points,6)
+            pygame.draw.lines(self.display_surface,'green',False,points,6)
 
     def setup_icon(self):
         self.icon = pygame.sprite.GroupSingle()
@@ -96,7 +116,7 @@ class Overworld:
     def input(self):
         keys = pygame.key.get_pressed()
 
-        if not self.moving:
+        if not self.moving and self.allow_input:
             if keys[pygame.K_RIGHT] and self.current_level < self.max_level:
                 self.move_direction = self.get_movement_data('next')
                 self.current_level += 1
@@ -127,10 +147,17 @@ class Overworld:
                 self.moving = False
                 self.move_direction = pygame.math.Vector2(0,0)
 
+    def input_timer(self):
+        if not self.allow_input:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.start_time >= self.timer_length:
+                self.allow_input = True
+
     def run(self):
-        bg = pygame.image.load('../graphics/decoration/background/Background.png')
+        bg = pygame.image.load('../graphics/decoration/background/Background.png').convert_alpha()
         bg = pygame.transform.scale(bg,(screen_width,screen_height))
         self.display_surface.blit(bg,(0,0))
+        self.input_timer()
         self.input()
         self.update_icon_pos()
         self.icon.update()
@@ -138,3 +165,4 @@ class Overworld:
         self.draw_paths()
         self.nodes.draw(self.display_surface) 
         self.icon.draw(self.display_surface)
+        self.write_text()
