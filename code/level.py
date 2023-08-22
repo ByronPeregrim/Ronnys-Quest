@@ -23,6 +23,8 @@ class Level:
         self.time = 0
         self.initial_time = pygame.time.get_ticks()
         self.ui = UI(surface)
+        self.dead = False
+        self.death_animation_timer = 0
 
         # level display
         self.font = pygame.font.Font(None,4)
@@ -260,7 +262,11 @@ class Level:
 
     def check_death(self):
         if self.player.sprite.rect.top > screen_height or self.cur_health <= 0:
-            self.create_overworld(self.current_level,0)
+            self.dead = True
+            if self.death_animation_timer > 90:
+                self.create_overworld(self.current_level,0)
+            else:
+                self.death_animation_timer += 1
 
     def check_win(self):
         if pygame.sprite.spritecollide(self.player.sprite,self.goal,False) and self.coins == 10:
@@ -373,7 +379,7 @@ class Level:
 
         # player
         self.scroll_x()
-        self.player.update()
+        self.player.update(self.dead)
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
         self.player.draw(self.display_surface)
@@ -387,7 +393,7 @@ class Level:
         self.show_clock(self.time)
 
         # Health
-        self.ui.show_health(self.cur_health,self.max_health)
+        self.ui.show_health(self.cur_health)
         
         # Coins
         self.ui.show_coins(self.coins)

@@ -37,18 +37,24 @@ class Player(pygame.sprite.Sprite):
         self.animations = {'idle':[],
                            'run':[],
                            'jump':[],
-                           'fall':[]}
+                           'fall':[],
+                           'death':[]}
         for animation in self.animations.keys():
             full_path = character_path + animation
             self.animations[animation] = import_folder(full_path)
 
-    def animate(self):
+    def animate(self,is_dead):
         animation = self.animations[self.status]
 
         # loop over frame index
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(animation):
-            self.frame_index = 0
+        if is_dead:
+            self.frame_index += self.animation_speed
+            if self.frame_index >= len(animation):
+                self.frame_index = len(animation) - 1
+        else:
+            self.frame_index += self.animation_speed
+            if self.frame_index >= len(animation):
+                self.frame_index = 0
 
         image = animation[int(self.frame_index)]
 
@@ -60,37 +66,44 @@ class Player(pygame.sprite.Sprite):
             flipped_image = pygame.transform.flip(image,True,False)
             self.image = flipped_image
 
-        if self.invincible:
+        if self.invincible and not is_dead:
             alpha = self.wave_value()
             self.image.set_alpha(alpha)
         else:
             self.image.set_alpha(255)
 
-    def get_input(self):
-        keys = pygame.key.get_pressed()
+    def get_input(self,is_dead):
+        if not is_dead:
+            keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_RIGHT]:
-            self.direction.x = 1
-            self.facing_right = True
-        elif keys[pygame.K_LEFT]:
-            self.direction.x = -1
-            self.facing_right = False
+            if keys[pygame.K_RIGHT]:
+                self.direction.x = 1
+                self.facing_right = True
+            elif keys[pygame.K_LEFT]:
+                self.direction.x = -1
+                self.facing_right = False
+            else:
+                self.direction.x = 0
+
+            if keys[pygame.K_SPACE] and self.on_ground:
+                self.jump()
         else:
             self.direction.x = 0
+            self.direction.y = 0
 
-        if keys[pygame.K_SPACE] and self.on_ground:
-            self.jump()
-
-    def get_status(self):
-        if self.direction.y < 0:
-            self.status = 'jump'
-        elif self.direction.y > 1:
-            self.status = 'fall'
+    def get_status(self,is_dead):
+        if is_dead:
+            self.status = 'death'
         else:
-            if self.direction.x != 0:
-                self.status = 'run'
+            if self.direction.y < 0:
+                self.status = 'jump'
+            elif self.direction.y > 1:
+                self.status = 'fall'
             else:
-                self.status = 'idle'
+                if self.direction.x != 0:
+                    self.status = 'run'
+                else:
+                    self.status = 'idle'
 
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -116,9 +129,9 @@ class Player(pygame.sprite.Sprite):
         if value >= 0: return 255
         else: return 0
 
-    def update(self):
-        self.get_input()
-        self.get_status()
-        self.animate()
+    def update(self,is_dead):
+        self.get_input(is_dead)
+        self.get_status(is_dead)
+        self.animate(is_dead)
         self.invincibility_timer()
         self.wave_value()

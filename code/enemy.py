@@ -13,7 +13,10 @@ class Enemy(AnimatedTile):
 
         self.rect.y += size - self.image.get_size()[1]
         self.speed = randint(2,3)
-    
+        
+        # Reduce enemy hitbox
+        self.collision_rect = pygame.Rect(self.rect.midtop,(11,self.rect.height))
+        self.rect = self.collision_rect
     def move(self):
         self.rect.x += self.speed
 
@@ -23,6 +26,12 @@ class Enemy(AnimatedTile):
 
     def reverse(self):
         self.speed *= -1
+    
+    def animate(self):
+        self.frame_index += 0.15
+        if self.frame_index >= len(self.frames):
+            self.frame_index = 0
+        self.image = self.frames[int(self.frame_index)]
 
     def update(self,shift):
         self.rect.x += shift

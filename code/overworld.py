@@ -63,6 +63,7 @@ class Overworld:
         self.max_level = max_level
         self.current_level = start_level
         self.create_level = create_level
+        self.big_font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',60)
         self.font = pygame.font.Font('../graphics/ui/ARCADEPI.TTF',30)
 
         # movement logic
@@ -81,17 +82,21 @@ class Overworld:
 
     
     def write_text(self):
-        welcome_text_surf = self.font.render('Welcome to Ronny\'s Quest',False,'gray')
-        welcome_text_rect = welcome_text_surf.get_rect(center = (screen_width / 2, screen_height / 16))
+        welcome_text_surf = self.big_font.render('Welcome to Ronny\'s Quest',False,'gray')
+        welcome_text_rect = welcome_text_surf.get_rect(center = (screen_width / 2, screen_height / 15))
         self.display_surface.blit(welcome_text_surf,welcome_text_rect)
 
         instruction_text_surf_1 = self.font.render('To unlock the next level,',False,'gray')
-        instruction_text_rect_1 = instruction_text_surf_1.get_rect(center = (screen_width / 2, screen_height - screen_height / 9))
+        instruction_text_rect_1 = instruction_text_surf_1.get_rect(center = (screen_width / 2, screen_height - screen_height / 6))
         self.display_surface.blit(instruction_text_surf_1, instruction_text_rect_1)
 
         instruction_text_surf_2 = self.font.render('collect all coins and reach the checkpoint!',False,'gray')
-        instruction_text_rect_2 = instruction_text_surf_2.get_rect(center = (screen_width / 2, screen_height - screen_height / 16))
+        instruction_text_rect_2 = instruction_text_surf_2.get_rect(center = (screen_width / 2, screen_height - screen_height / 9))
         self.display_surface.blit(instruction_text_surf_2, instruction_text_rect_2)
+
+        instruction_text_surf_3 = self.font.render('Press Space to start!',False,'gray')
+        instruction_text_rect_3 = instruction_text_surf_3.get_rect(center = (screen_width / 2, screen_height - screen_height / 18))
+        self.display_surface.blit(instruction_text_surf_3, instruction_text_rect_3)
 
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()

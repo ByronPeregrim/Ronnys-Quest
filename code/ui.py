@@ -18,9 +18,14 @@ class UI:
         self.coin_rect = self.coin.get_rect(topleft = (50,61))
         
 
-    def show_health(self,current,full):
+    def show_health(self,current):
         self.display_surface.blit(self.health_bar,self.health_bar_rect)
-        health_amount_surf = self.font.render(str(current) + '%',False,'gray')
+        if current <= 20:
+            if current < 0:
+                current = 0
+            health_amount_surf = self.font.render(str(current) + '%',False,'red')
+        else:
+            health_amount_surf = self.font.render(str(current) + '%',False,'gray')
         health_amount_rect = health_amount_surf.get_rect(midleft = (self.health_bar_rect.right + 4,self.health_bar_rect.centery + 3))
         self.display_surface.blit(health_amount_surf,health_amount_rect)
 
