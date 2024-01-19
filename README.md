@@ -3,9 +3,7 @@
 Embark on an adventurous journey with Ronny's Quest, a captivating 2D-platformer that will test your skills across three unique levels! Featuring vibrant pixel art
 crafted by a team of talented artists, Ronny's Quest promises a colorful and thrilling gaming experience for the entire family! Get ready for an exciting challenge!
 
-I wanted to develop a project that my friends and family would want to interact with and the immediate thought was to create a game. I wanted to challenge myself beyond a simple tic-tac-toe
-style game and connect with my video game roots by creating a 2D-platformer. Thus Ronny's Quest was born. Implementing particle animation, enemy collision, health tracking, and many other classic video game
-features, Ronny's Quest was a fun and challenging project that gave me a great foundation in Python and provided a great first-look into the world of video game creation.
+I set out to create a project that would engage my friends and family, and the natural choice was to develop a game. Seeking a challenge beyond the simplicity of a tic-tac-toe-style game, I decided to reconnect with my video game roots by venturing into the realm of 2D-platformers. Thus, Ronny's Quest came to life. Through the implementation of particle animation, enemy collision, health tracking, and various other classic video game features, this project became a delightful and challenging endeavor. It not only laid a solid foundation in Python but also provided me with a captivating introduction to the world of video game creation.
 
 ### Quick Start
 
